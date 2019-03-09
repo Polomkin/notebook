@@ -1,78 +1,81 @@
 <?php
 
-class QueryBuilder
-{
-    public $pdo;
 
+class QueryBuilder {
+    public $pdo = "";
     function __construct()
     {
-        $this->pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
+        $this->pdo = new PDO("mysql:host=localhost;dbname=test", "root", "");
     }
 
-    //Список задач
-    function all($table) /// posts , articles, tasks
-    {
+    function all($table) {
         $sql = "SELECT * FROM $table";
-        $statement = $this->pdo->prepare($sql); //подготовить
-        $statement->execute(); //true || false
-        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        return $results;
-    }
-
-    // Вывод одной задачи
-    function getOne($table, $id)
-    {
-        $sql = "SELECT * FROM $table WHERE id=:id";
         $statement = $this->pdo->prepare($sql);
-        $statement->bindParam(":id", $id);
         $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
 
-    //Сохранение новой задачи
-    function store($table, $data)
-    {
-        // 1. Ключи массива
+
+    function store($table, $data) {
         $keys = array_keys($data);
-        // 2. Сформировать строку title, content
-        $stringOfKeys = implode(',', $keys);
-        //3. Сформировать метки
-        $placeholders = ":" . implode(', :', $keys);
-
-        $sql = "INSERT INTO $table ($stringOfKeys) VALUES ($placeholders)";
-
+        $stringOfKeys = implode($keys,", ");
+        $strKeysWithDots = ":" . implode($keys,", :");
+        $sql = "INSERT INTO $table ($stringOfKeys) VALUES ($strKeysWithDots)";
+        echo '<pre>';
         $statement = $this->pdo->prepare($sql);
         $statement->execute($data); //true || false
+
+
     }
 
-    //Изменение\обновление существующей задачи
-    function update($table, $data)
-    {
-        $fields = '';
+    function showOne($table, $data) {
 
-        foreach($data as $key => $value) {
+        $sql = "SELECT * FROM $table WHERE id = :id";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindParam(":id", $data);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
 
+    function update($table, $data) {
+        $fields = "";
+        foreach ($data as $key=>$value) {
             $fields .= $key . "=:" . $key . ",";
         }
-
-        $fields = rtrim($fields, ',');
-
-
+        $fields = rtrim($fields, ",");
         $sql = "UPDATE $table SET $fields WHERE id=:id";
-
         $statement = $this->pdo->prepare($sql);
-        $statement->execute($data); // true || false
+        $statement->execute($data);
     }
 
-    //Удаление задачи
-    function delete($table, $id)
-    {
+    function delete($table, $id) {
         $sql = "DELETE FROM $table WHERE id=:id";
         $statement = $this->pdo->prepare($sql);
-        $statement->bindParam(":id", $id);
+        $statement->bindParam(":id",$id);
+        $statement->execute();
+    }
+
+    function getOneForData($table, $data) {
+        $fields = "";
+        foreach ($data as $key => $value) {
+            $fields .= $key . "=:" . $key . " AND ";
+        }
+        $fields = rtrim($fields, "AND ");
+        $sql = "SELECT * FROM $table WHERE $fields";
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($data);
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result;
+
+    }
+
+    function deleteForData($table,$data) {
+        $user = $this->getOneForData($table,$data);
+        $sql = "DELETE FROM $table WHERE id=:id";
+        $statement=$this->pdo->prepare($sql);
+        $statement->bindParam(":id",$user["id"]);
         $statement->execute();
     }
 }

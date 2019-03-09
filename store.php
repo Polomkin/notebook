@@ -1,15 +1,7 @@
 <?php
+require "database/QueryBuilder.php";
+$pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
 
-require 'database/QueryBuilder.php';
-
-$db = new QueryBuilder;
-
-$data = [
-    "title" =>  $_POST['title'],
-    "content"   =>  $_POST['content']
-];
-
-//$db->addTask($data);
-$db->store("tasks", $data);
-
-header("Location: /"); exit;
+$dbTasks = new QueryBuilder();
+$dbTasks->store("tasks", $_POST);
+header("Location: /test"); exit;

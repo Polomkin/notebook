@@ -1,4 +1,5 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -10,7 +11,7 @@
             <h1>Create Task</h1>
             <form action="store.php" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="title">
+                    <input type="text" name="title" class="form-control">
                 </div>
 
                 <div class="form-group">
@@ -24,5 +25,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

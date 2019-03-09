@@ -1,16 +1,14 @@
 <?php
-require 'database/QueryBuilder.php';
 
-$db = new QueryBuilder;
+require "database/QueryBuilder.php";
 
-$id = $_GET['id'];
 
-//$task = $db->getTask($id);
-$task = $db->getOne("tasks", $id);
+$dbTasks = new QueryBuilder();
+$task = $dbTasks->showOne("tasks",$_GET["id"]);
 
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -23,9 +21,11 @@ $task = $db->getOne("tasks", $id);
             <p>
                 <?= $task['content'];?>
             </p>
-            <a href="/">Go Back</a>
+            <a href="/test">Go Back</a>
         </div>
     </div>
 </div>
+
+
 </body>
 </html>
